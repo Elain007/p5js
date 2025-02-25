@@ -112,6 +112,21 @@ function setupLevels() {
     "111111111111111111111",
   ],
 }); 
+levels.push({
+  map: [
+    "111111111111111111111",
+    "1....2.......E.....41",
+    "1.111.1111111.11111.1",
+    "1...1....5...1.....E1",
+    "111.1.111.1.111.11111",
+    "1.3.1...1.1.....1...1",
+    "1.1.111.1.11111.1.111",
+    "1.1...1.1.....1.1...1",
+    "1.111.1.11111.1.11111",
+    "1.....1.....1.......1",
+    "111111111111111111111",
+  ],
+});
 }
 
 class ShooterEnemy {
@@ -609,14 +624,20 @@ function touchStarted() {
 *********************************************/
 function loadLevel(idx) {
   if (idx < 0 || idx >= levels.length) return;
+  
+  // 如果通关后 && 得分 >= 10，加载隐藏关卡
+  if (idx === levels.length - 1 && score < 10) {
+    gameState = "win"; // 如果得分不够，则结束游戏
+    return;
+  }
+
   tileMap = levels[idx].map.slice();
   coins = [];
   enemies = [];
-  bullets = []; // 初始化子弹数组
+  bullets = [];
   exitGate = null;
   let foundPlayer = false;
 
-  // 遍历地图，解析玩家、金币、出口、敌人等元素
   for (let row = 0; row < tileMap.length; row++) {
     for (let col = 0; col < tileMap[row].length; col++) {
       let ch = tileMap[row].charAt(col);
@@ -628,14 +649,12 @@ function loadLevel(idx) {
     }
   }
 
-  // 确保 `player` 存在
   if (!foundPlayer) {
     playerSpawnX = tileSize * 2;
     playerSpawnY = tileSize * 2;
   }
   player = new Player(playerSpawnX, playerSpawnY);
 
-  // 遍历地图，为不同的物体生成对象
   for (let row = 0; row < tileMap.length; row++) {
     for (let col = 0; col < tileMap[row].length; col++) {
       let ch = tileMap[row].charAt(col);
@@ -643,9 +662,9 @@ function loadLevel(idx) {
         coins.push(new Coin(col * tileSize + tileSize / 2, row * tileSize + tileSize / 2));
       } else if (ch === "4") {
         exitGate = new ExitGate(col * tileSize + tileSize / 2, row * tileSize + tileSize / 2);
-      } else if (ch === "E" || ch === "e") {
-        // 🔹 如果是第四关，则使用 ShooterEnemy，否则用普通 Enemy
-        if (idx === 3) { 
+      } else if (ch === "E") {
+        // 在隐藏关卡，部分 `E` 变成射击敌人
+        if (idx === levels.length - 1) {
           enemies.push(new ShooterEnemy(col * tileSize + tileSize / 2, row * tileSize + tileSize / 2));
         } else {
           enemies.push(new Enemy(col * tileSize + tileSize / 2, row * tileSize + tileSize / 2));
@@ -653,6 +672,8 @@ function loadLevel(idx) {
       }
     }
   }
+}
+
 
   // 确保 `exitGate` 存在
   if (!exitGate) {
