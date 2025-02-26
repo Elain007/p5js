@@ -101,7 +101,7 @@ function setupLevels() {
   levels.push({
   map: [
     "111111111111111111111",
-    "1......E...........41",
+    "1..................41",
     "1..5................1",
     "1..........222......1",
     "1...................1",
@@ -115,7 +115,7 @@ function setupLevels() {
 levels.push({
   map: [
     "111111111111111111111",
-    "1....2.......E.....41",
+    "1....2.............41",
     "1.111.1111111.11111.1",
     "1...1....5...1.....E1",
     "111.1.111.1.111.11111",
@@ -664,7 +664,7 @@ function loadLevel(idx) {
         exitGate = new ExitGate(col * tileSize + tileSize / 2, row * tileSize + tileSize / 2);
       } else if (ch === "E") {
         // 在隐藏关卡，部分 `E` 变成射击敌人
-        if (idx === levels.length - 1) {
+        if (idx === 3 || idx === levels.length - 1) {
           enemies.push(new ShooterEnemy(col * tileSize + tileSize / 2, row * tileSize + tileSize / 2));
         } else {
           enemies.push(new Enemy(col * tileSize + tileSize / 2, row * tileSize + tileSize / 2));
@@ -678,7 +678,7 @@ function loadLevel(idx) {
   // 确保 `exitGate` 存在
   if (!exitGate) {
     exitGate = new ExitGate(tileSize * 8, tileSize * 2);
-  }
+  
 }
 
 
